@@ -1,9 +1,8 @@
-package com.example.mobileclient.navigation
+package com.example.productivityapp.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.example.mobileclient.navigation.routes.Graphs
 
 
 @Composable
@@ -15,5 +14,6 @@ fun RootNavGraph(
         startDestination = Graphs.Auth.route
     ) {
         authNavGraph(navController)
+        userNavGraph(navController)
     }
 }

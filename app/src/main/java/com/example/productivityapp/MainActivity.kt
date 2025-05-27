@@ -1,5 +1,6 @@
 package com.example.productivityapp
 
+import BottomNavMenu
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,9 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.example.auth.AppEvent
 import com.example.auth.AuthEventBus
-import com.example.mobileclient.bottomnav.BottomNavMenu
-import com.example.mobileclient.navigation.RootNavGraph
-import com.example.mobileclient.navigation.routes.Screens
+import com.example.productivityapp.navigation.RootNavGraph
 import com.example.productivityapp.ui.theme.ProductivityAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,6 +32,10 @@ class MainActivity : ComponentActivity() {
                                 popUpTo(0)
                                 launchSingleTop = true
                             }
+                        }
+
+                        else -> {
+                            // TODO
                         }
                     }
                 }

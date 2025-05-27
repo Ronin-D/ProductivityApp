@@ -1,4 +1,3 @@
-package com.example.mobileclient.bottomnav
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

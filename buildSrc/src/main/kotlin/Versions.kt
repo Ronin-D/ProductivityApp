@@ -10,4 +10,5 @@ object Versions {
     const val dataStore = "1.1.3"
     const val paging = "3.3.6"
     const val sse = "2.5.0"
+    const val coil = "2.5.0"
 }

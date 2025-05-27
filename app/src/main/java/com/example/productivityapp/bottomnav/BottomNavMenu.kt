@@ -1,7 +1,3 @@
-package com.example.mobileclient.bottomnav
-
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -11,13 +7,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.mobileclient.navigation.routes.Screens
+import com.example.productivityapp.R
 import com.example.productivityapp.ui.theme.Purple40
 import com.example.productivityapp.ui.theme.Purple80
 
@@ -27,7 +25,11 @@ fun BottomNavMenu(
     modifier: Modifier = Modifier
 ) {
     val items = listOf(
-        TopLevelRoute("Тексты", Screens.TextList.route, Icons.Default.Home),
+        TopLevelRoute(
+            "Статистика",
+            Screens.AppStatistics.route,
+            ImageVector.vectorResource(R.drawable.statistics)
+        ),
     )
     val routes = items.map { it.route }
 

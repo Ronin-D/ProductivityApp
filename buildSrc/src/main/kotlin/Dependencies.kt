@@ -29,6 +29,8 @@ object Dependencies {
     const val paging = "androidx.paging:paging-compose:${Versions.paging}"
 
     const val sse = "com.launchdarkly:okhttp-eventsource:${Versions.sse}"
+
+    const val coil = "io.coil-kt:coil-compose:${Versions.coil}"
 }
 
 fun DependencyHandler.room() {
@@ -63,8 +65,8 @@ fun DependencyHandler.dataStore() {
     implementation(Dependencies.datastore)
 }
 
-fun DependencyHandler.paging() {
-    implementation(Dependencies.paging)
+fun DependencyHandler.coil() {
+    implementation(Dependencies.coil)
 }
 
 fun DependencyHandler.sse() {
