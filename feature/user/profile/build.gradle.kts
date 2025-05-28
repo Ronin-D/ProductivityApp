@@ -6,7 +6,7 @@ plugins {
 apply<MainGradlePlugin>()
 
 android {
-    namespace = "com.example.sign_in"
+    namespace = "com.example.profile"
 }
 
 dependencies {
@@ -14,6 +14,7 @@ dependencies {
     implementation(project(":core:ui"))
     implementation(project(":core:data:network"))
     implementation(project(":core:data:data_store"))
+    implementation(project(":core:util"))
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -31,6 +32,4 @@ dependencies {
     hilt()
     coil()
     dataStore()
-    //
 }
-

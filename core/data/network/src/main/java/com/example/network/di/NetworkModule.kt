@@ -4,6 +4,7 @@ import com.example.Urls
 import com.example.api.AuthApi
 import com.example.auth.JwtAuthInterceptor
 import com.example.data_store.AuthDataStoreRepository
+import com.example.network.api.UserApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -48,5 +49,16 @@ class NetworkModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(AuthApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserApi(okHttpClient: OkHttpClient): UserApi {
+        return Retrofit.Builder()
+            .baseUrl(Urls.USERS_API_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(UserApi::class.java)
     }
 }

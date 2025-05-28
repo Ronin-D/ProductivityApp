@@ -5,7 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.app_statistics.model.TimeRange
 import com.example.app_statistics.model.UsageApp
-import com.example.app_statistics.util.AppUsageHelper
+import com.example.util.AppUsageHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -8,4 +8,6 @@ sealed class Screens(
     object SignIn : Screens("sign_in")
 
     object AppStatistics: Screens("app_statistics")
+
+    object Profile: Screens("profile")
 }

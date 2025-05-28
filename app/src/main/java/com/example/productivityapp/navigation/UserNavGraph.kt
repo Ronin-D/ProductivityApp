@@ -7,6 +7,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.app_statistics.AppStatisticsRoute
+import com.example.profile.ProfileRoute
 
 fun NavGraphBuilder.userNavGraph(navController: NavController) {
     navigation(
@@ -14,9 +15,13 @@ fun NavGraphBuilder.userNavGraph(navController: NavController) {
         route = Graphs.User.route
     ) {
         composable(route = Screens.AppStatistics.route) {
-            AppStatisticsRoute(
+            AppStatisticsRoute()
+        }
 
-            )
+        composable(route = Screens.Profile.route) {
+            ProfileRoute(onSignOut = {
+                navController.navigate(Graphs.Auth.route)
+            })
         }
     }
 }

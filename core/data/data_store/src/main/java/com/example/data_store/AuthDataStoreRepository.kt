@@ -48,6 +48,14 @@ class AuthDataStoreRepository(private val context: Context) {
         }
     }
 
+    suspend fun clearTokens() {
+        context.dataStore.edit { settings ->
+            settings.remove(accessTokenKey)
+            settings.remove(refreshTokenKey)
+            settings.remove(isUserRememberedKey)
+        }
+    }
+
     companion object DataStoreKeys {
         val isUserRememberedKey = booleanPreferencesKey("is_user_remembered")
         val accessTokenKey = stringPreferencesKey("access_token")
