@@ -1,5 +1,7 @@
 package com.example.sign_in
 
+import Loading
+import TextInput
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,8 +27,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.samples.modularization.ui.Loading
-import com.google.samples.modularization.ui.TextInput
 
 @Composable
 fun SignInRoute(

@@ -10,4 +10,8 @@ sealed class Screens(
     object AppStatistics: Screens("app_statistics")
 
     object Profile: Screens("profile")
+
+    object ChatList: Screens("user_chat_list")
+
+    object Chat: Screens("chat")
 }

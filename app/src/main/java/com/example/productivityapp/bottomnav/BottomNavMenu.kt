@@ -1,5 +1,6 @@
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -33,10 +34,16 @@ fun BottomNavMenu(
             ImageVector.vectorResource(R.drawable.statistics)
         ),
         TopLevelRoute(
+            "Чат",
+            Screens.ChatList.route,
+            Icons.Default.Email
+        ),
+        TopLevelRoute(
             "Профиль",
             Screens.Profile.route,
             Icons.Default.AccountCircle
         )
+
     )
     val routes = items.map { it.route }
 

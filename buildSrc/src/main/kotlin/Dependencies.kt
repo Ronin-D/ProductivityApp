@@ -72,3 +72,7 @@ fun DependencyHandler.coil() {
 fun DependencyHandler.sse() {
     implementation(Dependencies.sse)
 }
+
+fun DependencyHandler.paging() {
+    implementation(Dependencies.paging)
+}

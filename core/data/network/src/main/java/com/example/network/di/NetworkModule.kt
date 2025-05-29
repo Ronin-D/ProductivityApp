@@ -4,7 +4,9 @@ import com.example.Urls
 import com.example.api.AuthApi
 import com.example.auth.JwtAuthInterceptor
 import com.example.data_store.AuthDataStoreRepository
+import com.example.network.api.ChatApi
 import com.example.network.api.UserApi
+import com.example.websocket.WebSocketManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -60,5 +62,27 @@ class NetworkModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(UserApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideChatApi(okHttpClient: OkHttpClient): ChatApi {
+        return Retrofit.Builder()
+            .baseUrl(Urls.CHAT_API_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(ChatApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWebSocketManager(
+        okHttpClient: OkHttpClient
+    ): WebSocketManager {
+        return WebSocketManager(
+            okHttpClient = okHttpClient,
+            baseUrl = Urls.CHAT_API_URL
+        )
     }
 }

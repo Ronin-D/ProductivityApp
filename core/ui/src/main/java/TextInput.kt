@@ -1,4 +1,3 @@
-package com.google.samples.modularization.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column

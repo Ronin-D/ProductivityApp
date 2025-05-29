@@ -1,4 +1,3 @@
-package com.google.samples.modularization.ui
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button

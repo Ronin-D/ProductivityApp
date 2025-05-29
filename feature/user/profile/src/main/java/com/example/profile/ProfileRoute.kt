@@ -1,5 +1,8 @@
 package com.example.profile
 
+import Error
+import Loading
+import ScreenLabel
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,8 +36,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.network.api.dto.UserDto
-import com.google.samples.modularization.ui.Error
-import com.google.samples.modularization.ui.Loading
 
 @Composable
 fun ProfileRoute(
@@ -214,21 +215,6 @@ internal fun ProfileItem(
                 Text(text = label, color = Color.Gray)
                 Text(text = value)
             }
-        }
-    }
-}
-
-@Composable
-internal fun ScreenLabel(
-    title: String,
-    modifier: Modifier = Modifier
-) {
-    Box(modifier = modifier) {
-        Row(
-            modifier = Modifier.align(Alignment.TopStart),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = title)
         }
     }
 }
