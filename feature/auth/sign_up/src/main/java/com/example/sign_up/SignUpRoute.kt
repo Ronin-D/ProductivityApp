@@ -10,12 +10,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,6 +28,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -31,6 +37,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.productivityapp.models.Role
+import androidx.compose.ui.semantics.Role as ComposeRole
 
 @Composable
 fun SignUpRoute(
@@ -42,41 +50,34 @@ fun SignUpRoute(
     SignUpScreen(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState()),
         userNameField = viewModel.userName.value,
         passwordField = viewModel.password.value,
         isPasswordFieldVisible = viewModel.isPasswordVisible.value,
-        onPasswordFieldChange = {
-            viewModel.onPasswordChange(it)
-        },
-        onUserNameFieldChange = {
-            viewModel.onUserNameChange(it)
-        },
+        onPasswordFieldChange = viewModel::onPasswordChange,
+        onUserNameFieldChange = viewModel::onUserNameChange,
         onPasswordFieldVisibilityChange = {
             viewModel.isPasswordVisible.value = !viewModel.isPasswordVisible.value
         },
         repeatPasswordField = viewModel.repeatPassword.value,
         isRepeatPasswordFieldVisible = viewModel.isRepeatPasswordFieldVisible.value,
-        onRepeatPasswordFieldChange = {
-            viewModel.onRepeatPasswordChange(it)
-        },
+        onRepeatPasswordFieldChange = viewModel::onRepeatPasswordChange,
         onRepeatPasswordFieldVisibilityChange = {
             viewModel.isRepeatPasswordFieldVisible.value =
                 !viewModel.isRepeatPasswordFieldVisible.value
         },
         emailField = viewModel.email.value,
-        onEmailFieldChange = {
-            viewModel.onEmailChange(it)
-        },
-        onRegister = {
-            viewModel.register()
-        },
+        onEmailFieldChange = viewModel::onEmailChange,
+        onRegister = viewModel::register,
         onGoBack = onGoBack,
+        selectedRole = viewModel.selectedRole.value,
+        onRoleSelected = viewModel::onRoleSelected,
         state = state,
         emailError = viewModel.emailError.value,
         passwordError = viewModel.passwordError.value,
         repeatPasswordError = viewModel.repeatPasswordError.value,
-        userNameError = viewModel.userNameError.value,
+        userNameError = viewModel.userNameError.value
     )
 }
 
@@ -97,16 +98,17 @@ internal fun SignUpScreen(
     onEmailFieldChange: (String) -> Unit,
     onRegister: () -> Unit,
     onGoBack: () -> Unit,
+    selectedRole: Role?,
+    onRoleSelected: (Role) -> Unit,
     state: SignUpUiState,
     emailError: String?,
     passwordError: String?,
     repeatPasswordError: String?,
-    userNameError: String?
+    userNameError: String?,
 ) {
     val context = LocalContext.current
     when (state) {
         SignUpUiState.Loading -> Loading(modifier = Modifier.fillMaxSize())
-
         SignUpUiState.Success -> {
             LaunchedEffect(Unit) {
                 Toast.makeText(context, "Пользователь успешно зарегистрирован", Toast.LENGTH_SHORT)
@@ -132,14 +134,15 @@ internal fun SignUpScreen(
                 onEmailFieldChange = onEmailFieldChange,
                 onRegister = onRegister,
                 onGoBack = onGoBack,
+                selectedRole = selectedRole,
+                onRoleSelected = onRoleSelected,
                 emailError = emailError,
                 passwordError = passwordError,
                 repeatPasswordError = repeatPasswordError,
-                userNameError = userNameError
+                userNameError = userNameError,
             )
         }
     }
-
 }
 
 @Composable
@@ -159,22 +162,16 @@ internal fun Content(
     onEmailFieldChange: (String) -> Unit,
     onRegister: () -> Unit,
     onGoBack: () -> Unit,
+    selectedRole: Role?,
+    onRoleSelected: (Role) -> Unit,
     emailError: String?,
     passwordError: String?,
     repeatPasswordError: String?,
-    userNameError: String?
-
+    userNameError: String?,
 ) {
-    Column(
-        modifier = modifier
-    ) {
-        TopNavigation(
-            onNavigateBack = onGoBack,
-            title = "Регистрация"
-        )
-        Box(
-            modifier = Modifier.fillMaxSize(),
-        ) {
+    Column(modifier = modifier) {
+        TopNavigation(onNavigateBack = onGoBack, title = "Регистрация")
+        Box(modifier = Modifier.fillMaxSize()) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -183,80 +180,95 @@ internal fun Content(
                 TextInput(
                     value = userNameField,
                     placeholder = "Имя пользователя",
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     errorMsg = userNameError,
                     onValueChange = onUserNameFieldChange
                 )
                 TextInput(
                     value = emailField,
                     placeholder = "Электронная почта",
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     errorMsg = emailError,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                    onValueChange = onEmailFieldChange,
+                    onValueChange = onEmailFieldChange
                 )
                 TextInput(
                     value = passwordField,
                     placeholder = "Пароль",
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     errorMsg = passwordError,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     onValueChange = onPasswordFieldChange,
-                    visualTransformation = if (!isPasswordFieldVisible) {
-                        PasswordVisualTransformation()
-                    } else {
-                        VisualTransformation.None
-                    },
+                    visualTransformation = if (!isPasswordFieldVisible) PasswordVisualTransformation() else VisualTransformation.None,
                     trailingIcon = {
-                        val image = if (isPasswordFieldVisible) {
+                        val image = if (isPasswordFieldVisible)
                             R.drawable.visible_icon
-                        } else {
-                            R.drawable.visibility_off_icon
-                        }
+                        else R.drawable.visibility_off_icon
+
                         IconButton(onClick = onPasswordFieldVisibilityChange) {
                             Icon(painter = painterResource(id = image), contentDescription = null)
                         }
                     }
                 )
-
                 TextInput(
                     value = repeatPasswordField,
                     placeholder = "Повторите пароль",
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     errorMsg = repeatPasswordError,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     onValueChange = onRepeatPasswordFieldChange,
-                    visualTransformation = if (!isRepeatPasswordFieldVisible) {
-                        PasswordVisualTransformation()
-                    } else {
-                        VisualTransformation.None
-                    },
+                    visualTransformation = if (!isRepeatPasswordFieldVisible) PasswordVisualTransformation() else VisualTransformation.None,
                     trailingIcon = {
-                        val image = if (isRepeatPasswordFieldVisible) {
+                        val image = if (isRepeatPasswordFieldVisible)
                             R.drawable.visible_icon
-                        } else {
-                            R.drawable.visibility_off_icon
-                        }
+                        else R.drawable.visibility_off_icon
+
                         IconButton(onClick = onRepeatPasswordFieldVisibilityChange) {
                             Icon(painter = painterResource(id = image), contentDescription = null)
                         }
                     }
                 )
 
+                Column {
+                    Text(text = "Выберите роль:")
+                    Role.values().forEach { role ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .selectable(
+                                    selected = (role == selectedRole),
+                                    onClick = { onRoleSelected(role) },
+                                    role = ComposeRole.RadioButton
+                                )
+                                .padding(4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = (role == selectedRole),
+                                onClick = { onRoleSelected(role) }
+                            )
+                            Text(
+                                text = when (role) {
+                                    Role.DOCTOR -> "Врач"
+                                    Role.PATIENT -> "Пациент"
+                                }
+                            )
+                        }
+                    }
+                }
+
                 Button(
                     onClick = onRegister,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFFFA061)
+                    )
                 ) {
                     Text(text = "Создать аккаунт")
                 }
             }
         }
     }
-
 }
 
 @Composable
@@ -284,4 +296,3 @@ fun TopNavigation(
         }
     }
 }
-

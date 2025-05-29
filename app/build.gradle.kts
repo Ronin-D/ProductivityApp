@@ -60,6 +60,7 @@ dependencies {
     implementation(project(":feature:doctor:profile"))
     implementation(project(":feature:doctor:patient_list"))
     implementation(project(":feature:doctor:patient_statistics"))
+    implementation(project(":core:util"))
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")

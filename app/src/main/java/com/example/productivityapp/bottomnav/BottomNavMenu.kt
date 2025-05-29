@@ -21,7 +21,8 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.productivityapp.R
 import com.example.productivityapp.models.Role
-import com.example.productivityapp.ui.theme.Purple40
+import com.example.productivityapp.ui.theme.BottomNavContainer
+import com.example.productivityapp.ui.theme.BottomNavSelectIndicator
 import com.example.productivityapp.ui.theme.Purple80
 
 @Composable
@@ -79,7 +80,7 @@ fun BottomNavMenu(
     ) {
         NavigationBar(
             modifier = modifier,
-            containerColor = Purple40
+            containerColor = BottomNavContainer
         ) {
             items.forEach { screen ->
                 val isSelected =
@@ -87,7 +88,7 @@ fun BottomNavMenu(
                 NavigationBarItem(
                     selected = isSelected,
                     colors = NavigationBarItemDefaults.colors(
-                        indicatorColor = Purple80
+                        indicatorColor = BottomNavSelectIndicator
                     ),
                     icon = {
                         Icon(

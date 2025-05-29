@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.api.AuthApi
 import com.example.api.dto.RegisterRequest
+import com.example.productivityapp.models.Role
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,6 +35,12 @@ class SignUpViewModel @Inject constructor(
     val repeatPassword = mutableStateOf("")
     val repeatPasswordError = mutableStateOf<String?>(null)
 
+    val selectedRole = mutableStateOf(Role.PATIENT)
+
+    fun onRoleSelected(role: Role) {
+        selectedRole.value = role
+    }
+
     fun register() {
         if (validateUsername() && validateEmail() && validatePassword() && validateRepeatPassword()) {
             viewModelScope.launch(Dispatchers.IO) {
@@ -42,7 +49,8 @@ class SignUpViewModel @Inject constructor(
                     val registerRequest = RegisterRequest(
                         name = userName.value,
                         password = password.value,
-                        email = email.value
+                        email = email.value,
+                        role = selectedRole.value.code
                     )
                     authApi.register(registerRequest)
                     _uiState.value = SignUpUiState.Success
@@ -74,7 +82,7 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun validateUsername(): Boolean {
-        val usernameRegex = "^[a-zA-Z0-9_]{3,20}\$"
+        val usernameRegex = "^[a-zA-Z0-9_]{3,20}$"
         return when {
             userName.value.isEmpty() -> {
                 userNameError.value = "Имя пользователя не может быть пустым"
@@ -95,7 +103,7 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun validateEmail(): Boolean {
-        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$"
+        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$"
         return when {
             email.value.isEmpty() -> {
                 emailError.value = "Email не может быть пустым"

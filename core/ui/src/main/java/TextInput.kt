@@ -1,4 +1,3 @@
-
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,8 +27,8 @@ fun TextInput(
     trailingIcon: @Composable() (() -> Unit)? = null
 ) {
 
-    val unfocusedBorderColor: Color = if (errorMsg==null) {
-        Color.Blue
+    val unfocusedBorderColor: Color = if (errorMsg == null) {
+        Color(0xFFFFC29A)
     } else {
         Color.Red
     }
