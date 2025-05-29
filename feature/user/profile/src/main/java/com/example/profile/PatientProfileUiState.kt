@@ -2,15 +2,15 @@ package com.example.profile
 
 import com.example.network.api.dto.UserDto
 
-sealed interface ProfileUiState {
+sealed interface PatientProfileUiState {
 
-    object Loading : ProfileUiState
+    object Loading : PatientProfileUiState
 
     data class Error(
         val message: String
-    ) : ProfileUiState
+    ) : PatientProfileUiState
 
     data class Success(
         val userDto: UserDto
-    ) : ProfileUiState
+    ) : PatientProfileUiState
 }

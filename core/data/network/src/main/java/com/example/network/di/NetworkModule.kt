@@ -5,6 +5,7 @@ import com.example.api.AuthApi
 import com.example.auth.JwtAuthInterceptor
 import com.example.data_store.AuthDataStoreRepository
 import com.example.network.api.ChatApi
+import com.example.network.api.PatientApi
 import com.example.network.api.UserApi
 import com.example.websocket.WebSocketManager
 import dagger.Module
@@ -84,5 +85,16 @@ class NetworkModule {
             okHttpClient = okHttpClient,
             baseUrl = Urls.CHAT_API_URL
         )
+    }
+
+    @Provides
+    @Singleton
+    fun providePatientApi(okHttpClient: OkHttpClient): PatientApi {
+        return Retrofit.Builder()
+            .baseUrl(Urls.PATIENT_API_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(PatientApi::class.java)
     }
 }

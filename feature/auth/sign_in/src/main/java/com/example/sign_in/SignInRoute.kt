@@ -30,7 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun SignInRoute(
-    onNavigateToTexts: () -> Unit,
+    onNavigateToMain: (String) -> Unit,
     onGoToRegister: () -> Unit,
     viewModel: SignInViewModel = hiltViewModel()
 ) {
@@ -42,7 +42,7 @@ fun SignInRoute(
 
     LaunchedEffect(viewModel.isUserSignedIn.value) {
         if (viewModel.isUserSignedIn.value) {
-            onNavigateToTexts()
+            onNavigateToMain(viewModel.role.value)
         }
     }
 
@@ -69,7 +69,7 @@ fun SignInRoute(
         onSignIn = {
             viewModel.signIn()
         },
-        onNavigateToTexts = onNavigateToTexts,
+        onNavigateToMain = onNavigateToMain,
         onGoToRegister = onGoToRegister,
         state = state,
         userNameError = viewModel.userNameError.value,
@@ -90,18 +90,18 @@ internal fun SignInScreen(
     onRememberMeCheckedChange: (Boolean) -> Unit,
     onSignIn: () -> Unit,
     onGoToRegister: () -> Unit,
-    onNavigateToTexts: () -> Unit,
+    onNavigateToMain: (String) -> Unit,
     state: SignInUiState,
     userNameError: String?,
     passwordError: String?
 ) {
     when (state) {
 
-        SignInUiState.Loading -> Loading(modifier = Modifier.fillMaxSize())
+        is SignInUiState.Loading -> Loading(modifier = Modifier.fillMaxSize())
 
-        SignInUiState.Success -> {
+        is SignInUiState.Success -> {
             LaunchedEffect(Unit) {
-                onNavigateToTexts()
+                onNavigateToMain(state.loginResponse.role)
             }
         }
 

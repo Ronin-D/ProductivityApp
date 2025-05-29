@@ -7,7 +7,6 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,8 +37,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.network.api.dto.UserDto
 
 @Composable
-fun ProfileRoute(
-    viewModel: ProfileViewModel = hiltViewModel(),
+fun UserProfileRoute(
+    viewModel: PatientProfileViewModel = hiltViewModel(),
     onSignOut: () -> Unit
 ) {
     val context = LocalContext.current
@@ -71,7 +70,7 @@ fun ProfileRoute(
 
 @Composable
 internal fun ProfileScreen(
-    state: ProfileUiState,
+    state: PatientProfileUiState,
     sendState: SendStatisticsUiState,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
@@ -83,16 +82,16 @@ internal fun ProfileScreen(
 
     Box(modifier = modifier) {
         when (state) {
-            ProfileUiState.Loading -> Loading(modifier = Modifier.fillMaxSize())
+            PatientProfileUiState.Loading -> Loading(modifier = Modifier.fillMaxSize())
 
-            is ProfileUiState.Success -> Content(
+            is PatientProfileUiState.Success -> Content(
                 userDto = state.userDto,
                 modifier = modifier,
                 onPublishStatistics = onPublishStatistics,
                 onSignOut = onSignOut
             )
 
-            is ProfileUiState.Error -> Error(
+            is PatientProfileUiState.Error -> Error(
                 cause = "Не удалось загрузить данные профиля",
                 onRetry = onRetry,
                 modifier = Modifier.fillMaxSize()

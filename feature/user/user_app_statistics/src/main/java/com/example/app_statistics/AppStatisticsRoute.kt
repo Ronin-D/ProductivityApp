@@ -1,47 +1,29 @@
 package com.example.app_statistics
 
-import android.app.DatePickerDialog
+import TimeRange
+import TimeRangeDropdown
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
-import com.example.app_statistics.model.TimeRange
 import com.example.app_statistics.model.UsageApp
 import kotlinx.coroutines.delay
+import showCustomDatePicker
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
+import java.time.Instant.ofEpochMilli
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.util.*
 
 @Composable
 fun AppStatisticsRoute(
@@ -50,6 +32,8 @@ fun AppStatisticsRoute(
     val stats by viewModel.appStats.collectAsState()
     val hasPermission by viewModel.hasPermission.collectAsState()
     val selectedRange by viewModel.selectedRange.collectAsState()
+    val customStart by viewModel.customStart.collectAsState()
+    val customEnd by viewModel.customEnd.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.checkPermissionAndLoadData()
@@ -59,9 +43,6 @@ fun AppStatisticsRoute(
         }
     }
 
-    val customStart by viewModel.customStart.collectAsState()
-    val customEnd by viewModel.customEnd.collectAsState()
-
     AppStatisticsScreen(
         modifier = Modifier.fillMaxSize(),
         appStats = stats,
@@ -69,11 +50,20 @@ fun AppStatisticsRoute(
         selectedRange = selectedRange,
         customStart = customStart,
         customEnd = customEnd,
-        onRequestPermission = { viewModel.requestPermission() },
-        onTimeRangeSelected = { viewModel.onTimeRangeChange(it) },
-        onCustomDateSelected = { start, end -> viewModel.setCustomDates(start, end) }
+        onRequestPermission = viewModel::requestPermission,
+        onTimeRangeSelected = viewModel::onTimeRangeChange,
+        onCustomDateSelected = { startMillis, endMillis ->
+            val startZdt = ZonedDateTime.ofInstant(
+                ofEpochMilli(startMillis),
+                ZoneId.systemDefault()
+            )
+            val endZdt = ZonedDateTime.ofInstant(
+                ofEpochMilli(endMillis),
+                ZoneId.systemDefault()
+            )
+            viewModel.setCustomDates(startZdt, endZdt)
+        }
     )
-
 }
 
 @Composable
@@ -92,8 +82,11 @@ fun AppStatisticsScreen(
 
     if (showPicker.value) {
         showCustomDatePicker(
-            onDatesSelected = { start, end ->
-                onCustomDateSelected(start, end)
+            onDatesSelected = { startZdt, endZdt ->
+                onCustomDateSelected(
+                    startZdt.toInstant().toEpochMilli(),
+                    endZdt.toInstant().toEpochMilli()
+                )
                 showPicker.value = false
             },
             onPickerDismissed = {
@@ -101,6 +94,7 @@ fun AppStatisticsScreen(
             }
         )
     }
+
     Box(modifier = modifier) {
         if (!hasPermission) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -113,9 +107,7 @@ fun AppStatisticsScreen(
                 TimeRangeDropdown(
                     selected = selectedRange,
                     onRangeSelected = onTimeRangeSelected,
-                    onRequestCustom = {
-                        showPicker.value = true
-                    },
+                    onRequestCustom = { showPicker.value = true }
                 )
 
                 if (selectedRange == TimeRange.CUSTOM && customStart != null && customEnd != null) {
@@ -124,55 +116,21 @@ fun AppStatisticsScreen(
                     val endDate = formatter.format(Date(customEnd))
                     Text(
                         text = "С $startDate по $endDate",
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier.padding(vertical = 8.dp),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
 
-                AppStatisticsContent(appStats, Modifier.fillMaxSize().padding(16.dp))
-            }
-        }
-    }
-
-}
-
-
-@Composable
-fun TimeRangeDropdown(
-    selected: TimeRange,
-    onRangeSelected: (TimeRange) -> Unit,
-    onRequestCustom: () -> Unit,
-) {
-    var expanded by remember { mutableStateOf(false) }
-
-    Box(Modifier.padding(16.dp)) {
-        OutlinedButton(onClick = { expanded = true }) {
-            Text("Период: ${selected.label}")
-        }
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = {
-                expanded = false
-            }
-        ) {
-            TimeRange.values().forEach {
-                DropdownMenuItem(
-                    text = { Text(it.label) },
-                    onClick = {
-                        expanded = false
-                        if (it == TimeRange.CUSTOM) {
-                            onRequestCustom()
-                        } else {
-                            onRangeSelected(it)
-                        }
-                    }
+                AppStatisticsContent(
+                    appStats = appStats,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 16.dp)
                 )
             }
         }
     }
 }
-
 
 @Composable
 internal fun AppStatisticsContent(
@@ -209,74 +167,3 @@ fun AppItem(app: UsageApp) {
         }
     }
 }
-
-@Composable
-fun showCustomDatePicker(
-    onDatesSelected: (Long, Long) -> Unit,
-    onPickerDismissed: () -> Unit
-) {
-    val context = LocalContext.current
-    val calendar = Calendar.getInstance()
-
-    val startPickerShown = remember { mutableStateOf(false) }
-    val endPickerShown = remember { mutableStateOf(false) }
-
-    val startDate = remember { mutableStateOf<Long?>(null) }
-
-    if (startPickerShown.value) {
-        val dialog = DatePickerDialog(
-            context,
-            { _, year, month, dayOfMonth ->
-                val startCal = Calendar.getInstance().apply {
-                    set(year, month, dayOfMonth, 0, 0)
-                }
-                startDate.value = startCal.timeInMillis
-                startPickerShown.value = false
-                endPickerShown.value = true
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-
-        dialog.setOnDismissListener {
-            if (startPickerShown.value) {
-                startPickerShown.value = false
-                onPickerDismissed()
-            }
-        }
-
-        dialog.show()
-    }
-
-    if (endPickerShown.value && startDate.value != null) {
-        val dialog = DatePickerDialog(
-            context,
-            { _, year, month, dayOfMonth ->
-                val endCal = Calendar.getInstance().apply {
-                    set(year, month, dayOfMonth, 23, 59)
-                }
-                endPickerShown.value = false
-                onDatesSelected(startDate.value!!, endCal.timeInMillis)
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-
-        dialog.setOnDismissListener {
-            if (endPickerShown.value) {
-                endPickerShown.value = false
-                onPickerDismissed()
-            }
-        }
-
-        dialog.show()
-    }
-
-    LaunchedEffect(Unit) {
-        startPickerShown.value = true
-    }
-}
-
-

@@ -57,6 +57,9 @@ dependencies {
     implementation(project(":feature:user:profile"))
     implementation(project(":feature:user:chat_list"))
     implementation(project(":feature:chat"))
+    implementation(project(":feature:doctor:profile"))
+    implementation(project(":feature:doctor:patient_list"))
+    implementation(project(":feature:doctor:patient_statistics"))
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")

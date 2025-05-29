@@ -22,13 +22,13 @@ import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor(
+class PatientProfileViewModel @Inject constructor(
     private val userApi: UserApi,
     private val authDataStoreRepository: AuthDataStoreRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<ProfileUiState>(ProfileUiState.Loading)
-    val uiState: StateFlow<ProfileUiState> = _uiState
+    private val _uiState = MutableStateFlow<PatientProfileUiState>(PatientProfileUiState.Loading)
+    val uiState: StateFlow<PatientProfileUiState> = _uiState
 
     private val _sendStatisticsUiState =
         MutableStateFlow<SendStatisticsUiState>(SendStatisticsUiState.Idle)
@@ -41,16 +41,16 @@ class ProfileViewModel @Inject constructor(
     private fun loadUserData() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                _uiState.value = ProfileUiState.Success(userApi.getUserData())
+                _uiState.value = PatientProfileUiState.Success(userApi.getUserData())
             } catch (e: Exception) {
                 Log.e("profile", e.message.toString())
-                _uiState.value = ProfileUiState.Error(e.message.toString())
+                _uiState.value = PatientProfileUiState.Error(e.message.toString())
             }
         }
     }
 
     fun retry() {
-        _uiState.value = ProfileUiState.Loading
+        _uiState.value = PatientProfileUiState.Loading
         loadUserData()
     }
 

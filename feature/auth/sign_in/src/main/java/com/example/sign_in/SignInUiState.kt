@@ -1,5 +1,7 @@
 package com.example.sign_in
 
+import com.example.api.dto.LoginResponse
+
 sealed interface SignInUiState {
 
     object Loading : SignInUiState
@@ -10,5 +12,5 @@ sealed interface SignInUiState {
         val message: String
     ) : SignInUiState
 
-    object Success : SignInUiState
+    data class Success(val loginResponse: LoginResponse) : SignInUiState
 }

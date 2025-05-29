@@ -30,6 +30,7 @@ class SignInViewModel @Inject constructor(
     val userNameError = mutableStateOf<String?>(null)
     val passwordError = mutableStateOf<String?>(null)
     val isUserSignedIn = mutableStateOf(false)
+    val role = mutableStateOf("")
 
 
     fun signIn() {
@@ -41,10 +42,11 @@ class SignInViewModel @Inject constructor(
                         LoginRequest(username = userName.value, password = password.value)
                     val loginResponse = authApi.login(loginRequest)
                     authDataStoreRepository.setAccessToken(loginResponse.accessToken)
+                    authDataStoreRepository.setUserRole(loginResponse.role)
                     if (isRememberBtnClicked.value) {
                         authDataStoreRepository.setUserRememberedFlag(isRememberBtnClicked.value)
                     }
-                    _uiState.value = SignInUiState.Success
+                    _uiState.value = SignInUiState.Success(loginResponse)
                 } catch (e: Exception) {
                     _uiState.value = SignInUiState.Error(message = e.message.toString())
                 }
@@ -57,6 +59,7 @@ class SignInViewModel @Inject constructor(
             val isUserRemembered = authDataStoreRepository.getUserRememberedFlag().first()
             if (isUserRemembered == true) {
                 isUserSignedIn.value = true
+                role.value = authDataStoreRepository.getUserRole().first() ?: ""
             }
         }
     }

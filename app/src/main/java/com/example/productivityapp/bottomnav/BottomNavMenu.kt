@@ -1,6 +1,7 @@
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -19,32 +20,57 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.productivityapp.R
+import com.example.productivityapp.models.Role
 import com.example.productivityapp.ui.theme.Purple40
 import com.example.productivityapp.ui.theme.Purple80
 
 @Composable
 fun BottomNavMenu(
     navController: NavController,
+    role: Role?,
     modifier: Modifier = Modifier
 ) {
-    val items = listOf(
-        TopLevelRoute(
-            "Статистика",
-            Screens.AppStatistics.route,
-            ImageVector.vectorResource(R.drawable.statistics)
-        ),
-        TopLevelRoute(
-            "Чат",
-            Screens.ChatList.route,
-            Icons.Default.Email
-        ),
-        TopLevelRoute(
-            "Профиль",
-            Screens.Profile.route,
-            Icons.Default.AccountCircle
-        )
+    val items =
+        when (role) {
+            Role.DOCTOR -> {
+                listOf(
+                    TopLevelRoute(
+                        "Пациенты",
+                        Screens.PatientList.route,
+                        Icons.Default.Face
+                    ),
+                    TopLevelRoute(
+                        "Профиль",
+                        Screens.DoctorProfile.route,
+                        Icons.Default.AccountCircle
+                    )
 
-    )
+                )
+            }
+
+            Role.PATIENT -> {
+                listOf(
+                    TopLevelRoute(
+                        "Статистика",
+                        Screens.AppStatistics.route,
+                        ImageVector.vectorResource(R.drawable.statistics)
+                    ),
+                    TopLevelRoute(
+                        "Чат",
+                        Screens.ChatList.route,
+                        Icons.Default.Email
+                    ),
+                    TopLevelRoute(
+                        "Профиль",
+                        Screens.UserProfile.route,
+                        Icons.Default.AccountCircle
+                    )
+
+                )
+            }
+
+            null -> emptyList()
+        }
     val routes = items.map { it.route }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()

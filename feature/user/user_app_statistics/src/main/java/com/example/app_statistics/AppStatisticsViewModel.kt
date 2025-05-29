@@ -1,15 +1,16 @@
 package com.example.app_statistics
 
+import TimeRange
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.app_statistics.model.TimeRange
 import com.example.app_statistics.model.UsageApp
 import com.example.util.AppUsageHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -35,12 +36,13 @@ class AppStatisticsViewModel @Inject constructor(
     private val _selectedRange = MutableStateFlow(TimeRange.LAST_7_DAYS)
     val selectedRange: StateFlow<TimeRange> = _selectedRange
 
-    fun setCustomDates(start: Long, end: Long) {
-        _customStart.value = start
-        _customEnd.value = end
+    fun setCustomDates(start: ZonedDateTime, end: ZonedDateTime) {
+        _customStart.value = start.toInstant().toEpochMilli()
+        _customEnd.value = end.toInstant().toEpochMilli()
         _selectedRange.value = TimeRange.CUSTOM
         loadUsageStats()
     }
+
 
     fun checkPermissionAndLoadData() {
         if (AppUsageHelper.hasUsageStatsPermission(context)) {
@@ -68,13 +70,16 @@ class AppStatisticsViewModel @Inject constructor(
             }
 
             val stats = AppUsageHelper.getUsageStats(context, start, end)
-            val apps = stats.mapNotNull {
-                val appInfo = AppUsageHelper.getAppNameAndIcon(context, it.packageName)
+
+            val aggregated = stats.groupBy { it.packageName }.mapNotNull { (packageName, list) ->
+                val totalForeground = list.sumOf { it.totalTimeInForeground }
+                val appInfo = AppUsageHelper.getAppNameAndIcon(context, packageName)
                 appInfo?.let { (name, icon) ->
-                    UsageApp(name, icon, it.totalTimeInForeground, it.packageName)
+                    UsageApp(name, icon, totalForeground, packageName)
                 }
             }.sortedByDescending { it.foregroundTime }
-            _appStats.value = apps
+
+            _appStats.value = aggregated
         }
     }
 

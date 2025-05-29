@@ -30,6 +30,18 @@ class AuthDataStoreRepository(private val context: Context) {
         }
     }
 
+    suspend fun setUserRole(role: String) {
+        context.dataStore.edit { settings ->
+            settings[userRoleKey] = role
+        }
+    }
+
+    fun getUserRole(): Flow<String?> {
+        return context.dataStore.data.map { settings ->
+            settings[userRoleKey]
+        }
+    }
+
     fun getUserRememberedFlag(): Flow<Boolean?> {
         return context.dataStore.data.map { settings ->
             settings[isUserRememberedKey]
@@ -53,6 +65,7 @@ class AuthDataStoreRepository(private val context: Context) {
             settings.remove(accessTokenKey)
             settings.remove(refreshTokenKey)
             settings.remove(isUserRememberedKey)
+            settings.remove(userRoleKey)
         }
     }
 
@@ -60,5 +73,6 @@ class AuthDataStoreRepository(private val context: Context) {
         val isUserRememberedKey = booleanPreferencesKey("is_user_remembered")
         val accessTokenKey = stringPreferencesKey("access_token")
         val refreshTokenKey = stringPreferencesKey("refresh_token")
+        val userRoleKey = stringPreferencesKey("user_role")
     }
 }

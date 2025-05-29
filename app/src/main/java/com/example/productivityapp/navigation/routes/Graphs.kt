@@ -1,5 +1,9 @@
 sealed class Graphs(val route: String) {
-    object User : Graphs(route = "user_role_nav")
+    object Patient : Graphs(route = "patient_nav")
 
     object Auth : Graphs(route = "auth_nav")
+
+    object Doctor: Graphs("doctor_nav")
+
+    object Chat: Graphs("chat_nav")
 }

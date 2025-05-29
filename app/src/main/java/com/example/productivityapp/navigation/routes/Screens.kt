@@ -9,9 +9,15 @@ sealed class Screens(
 
     object AppStatistics: Screens("app_statistics")
 
-    object Profile: Screens("profile")
+    object UserProfile: Screens("user_profile")
 
     object ChatList: Screens("user_chat_list")
 
     object Chat: Screens("chat")
+
+    object DoctorProfile: Screens("doctor_profile")
+
+    object PatientList: Screens("patient_list")
+
+    object PatientStatistics: Screens("patient_statistics")
 }

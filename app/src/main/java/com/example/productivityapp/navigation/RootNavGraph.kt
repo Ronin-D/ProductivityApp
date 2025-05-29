@@ -1,5 +1,6 @@
 package com.example.productivityapp.navigation
 
+import Graphs
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -14,6 +15,8 @@ fun RootNavGraph(
         startDestination = Graphs.Auth.route
     ) {
         authNavGraph(navController)
-        userNavGraph(navController)
+        patientNavGraph(navController)
+        doctorNavGraph(navController)
+        chatNavGraph(navController)
     }
 }
