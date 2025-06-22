@@ -56,6 +56,8 @@ dependencies {
     implementation(project(":feature:user:user_app_statistics"))
     implementation(project(":feature:user:profile"))
     implementation(project(":feature:user:chat_list"))
+    implementation(project(":feature:user:app_blocker"))
+    implementation(project(":feature:user:blocked_app_list"))
     implementation(project(":feature:chat"))
     implementation(project(":feature:doctor:profile"))
     implementation(project(":feature:doctor:patient_list"))

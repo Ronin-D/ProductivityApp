@@ -2,6 +2,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -23,7 +24,6 @@ import com.example.productivityapp.R
 import com.example.productivityapp.models.Role
 import com.example.productivityapp.ui.theme.BottomNavContainer
 import com.example.productivityapp.ui.theme.BottomNavSelectIndicator
-import com.example.productivityapp.ui.theme.Purple80
 
 @Composable
 fun BottomNavMenu(
@@ -52,6 +52,11 @@ fun BottomNavMenu(
             Role.PATIENT -> {
                 listOf(
                     TopLevelRoute(
+                        "Блокировка",
+                        Screens.BlockedAppList.route,
+                        Icons.Default.Lock
+                    ),
+                    TopLevelRoute(
                         "Статистика",
                         Screens.AppStatistics.route,
                         ImageVector.vectorResource(R.drawable.statistics)
@@ -66,7 +71,6 @@ fun BottomNavMenu(
                         Screens.UserProfile.route,
                         Icons.Default.AccountCircle
                     )
-
                 )
             }
 

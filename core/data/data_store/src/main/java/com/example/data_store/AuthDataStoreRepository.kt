@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 private const val DATA_STORE_FILE_NAME = "auth"
-val Context.dataStore by preferencesDataStore(name = DATA_STORE_FILE_NAME)
+private val Context.dataStore by preferencesDataStore(name = DATA_STORE_FILE_NAME)
 
 class AuthDataStoreRepository(private val context: Context) {
     suspend fun setUserRememberedFlag(value: Boolean) {

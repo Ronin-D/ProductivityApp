@@ -1,10 +1,12 @@
 package com.example.data_store.di
 
-import android.app.Application
+import android.content.Context
+import com.example.data_store.AppBlockDataStore
 import com.example.data_store.AuthDataStoreRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -14,7 +16,13 @@ object DataStoreModule {
 
     @Provides
     @Singleton
-    fun provideDataStoreRepository(application: Application): AuthDataStoreRepository {
-        return AuthDataStoreRepository(application.applicationContext)
+    fun provideDataStoreRepository(@ApplicationContext context: Context): AuthDataStoreRepository {
+        return AuthDataStoreRepository(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAppBlockDataStore(@ApplicationContext context: Context): AppBlockDataStore {
+        return AppBlockDataStore(context)
     }
 }
